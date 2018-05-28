@@ -41,7 +41,7 @@ namespace MayorBot.Services
             }
         }
 
-        public async Task SendAudioAsync(IGuild guild, IMessageChannel channel, string path, bool isFolder = false)
+        public async Task SendAudioAsync(IGuild guild, IMessageChannel channel, string path)
         {
             if (!File.Exists(path))
             {
@@ -50,7 +50,6 @@ namespace MayorBot.Services
             }
             if (_connectedChannels.TryGetValue(guild.Id, out var client))
             {
-                if(!isFolder)
                 using (var ffmpeg = CreateStream(path))
                 using (var stream = client.CreatePCMStream(AudioApplication.Music))
                 {
@@ -60,24 +59,7 @@ namespace MayorBot.Services
                     }
                     finally { await stream.FlushAsync(); }
                 }
-                else
-                {
-                    using (var ffmpeg = CreateStreamForFolder(path))
-                    using (var stream = client.CreatePCMStream(AudioApplication.Music))
-                    {
-                        try
-                        {
-                            await ffmpeg.StandardOutput.BaseStream.CopyToAsync(stream);
-                        }
-                        finally { await stream.FlushAsync(); }
-                    }
-                }
             }
-        }
-
-        public async Task PlayKononAsync(IGuild guild, IMessageChannel channel)
-        {
-            await SendAudioAsync(guild, channel, "konon", true);
         }
         private Process CreateStream(string path)
         {
@@ -85,16 +67,6 @@ namespace MayorBot.Services
             {
                 FileName = "ffmpeg.exe",
                 Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            });
-        }
-        private Process CreateStreamForFolder(string path)
-        {
-            return Process.Start(new ProcessStartInfo
-            {
-                FileName = "ffmpeg.exe",
-                Arguments = $" find {path} -name \"*.mp3\" | xargs -I $ -hide_banner -loglevel panic -i $ -ac 2 -f s16le -ar 48000 pipe:1",
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             });

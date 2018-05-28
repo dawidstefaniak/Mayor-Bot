@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -11,6 +13,8 @@ namespace MayorBot.Modules
         // Scroll down further for the AudioService.
         // Like, way down
         private readonly AudioService _service;
+        private readonly DirectoryInfo _kononDir = new DirectoryInfo("konon");
+        private readonly Random _random = new Random();
 
         // Remember to add an instance of the AudioService
         // to your IServiceCollection when you initialize your bot
@@ -43,16 +47,12 @@ namespace MayorBot.Modules
             await _service.SendAudioAsync(Context.Guild, Context.Channel, song);
         }
 
-        [Command("kononowicz", RunMode = RunMode.Async)]
+        [Command("konon", RunMode = RunMode.Async)]
         public async Task PlayKonon()
         {
-            Queue<string> Songs = new Queue<string>();
-            Songs.Enqueue("konon/niebedeprzeklinac.mp3");
-            Songs.Enqueue("konon/zato.mp3");
-            foreach (string song in Songs)
+            foreach (var file in _kononDir.GetFiles("*.mp3"))
             {
-                
-                await _service.SendAudioAsync(Context.Guild, Context.Channel, song);
+                await _service.SendAudioAsync(Context.Guild, Context.Channel, $"konon/{file.Name}");
             }
         }
     }
