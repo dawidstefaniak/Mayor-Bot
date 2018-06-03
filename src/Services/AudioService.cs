@@ -40,10 +40,9 @@ namespace MayorBot.Services
                 //await Log(LogSeverity.Info, $"Disconnected from voice on {guild.Name}.");
             }
         }
-
         public async Task SendAudioAsync(IGuild guild, IMessageChannel channel, string path)
         {
-            if (!File.Exists(path))
+            if (!File.Exists(@path))
             {
                 await channel.SendMessageAsync("File does not exist.");
                 return;
@@ -65,8 +64,8 @@ namespace MayorBot.Services
         {
             return Process.Start(new ProcessStartInfo
             {
-                FileName = "ffmpeg.exe",
-                Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
+                FileName = "ffmpeg",
+                Arguments = $@"-hide_banner -loglevel panic -i ""{path}"" -ac 2 -f s16le -ar 48000 pipe:1",
                 UseShellExecute = false,
                 RedirectStandardOutput = true
             });

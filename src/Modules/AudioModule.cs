@@ -9,15 +9,12 @@ using MayorBot.Services;
 
 namespace MayorBot.Modules
 {
-    public class AudioModule : ModuleBase<ICommandContext>
+    public class AudioModule : ModuleBase<SocketCommandContext>
     {
         // Scroll down further for the AudioService.
         // Like, way down
         private readonly AudioService _service;
         private readonly RandomGenService _random;
-
-        //Konon directory is folder with all mp3's 
-        private DirectoryInfo _kononDir = new DirectoryInfo("konon");
 
 
         // Remember to add an instance of the AudioService
@@ -42,6 +39,7 @@ namespace MayorBot.Modules
         [Command("leave", RunMode = RunMode.Async)]
         public async Task LeaveCmd()
         {
+
             await _service.LeaveAudio(Context.Guild);
   
         }
@@ -53,17 +51,21 @@ namespace MayorBot.Modules
         }
 
         [Command("konon", RunMode = RunMode.Async)]
-        public async Task PlayKonon([Remainder] double minutes)
+        public async Task PlayKonon([Remainder] double minutes=0)
         {
+            await LeaveCmd();
+            await JoinCmd();
+            //TODO Make service from it
+            var kononDir = new DirectoryInfo(@"konon");
+            await Context.Channel.SendMessageAsync(kononDir.FullName);
+            var files = kononDir.GetFiles(@"*.mp3");
+            //This to service
             await Context.Channel.SendMessageAsync("Mayor bot activated!");
             if (minutes>=0)
             while (true)
             {
+                await _service.SendAudioAsync(Context.Guild, Context.Channel, $@"{files[_random.GetRandomValueFromZero(files.Length)].FullName}");
                 Thread.Sleep(_random.GetRangeValue(minutes * 60000));
-                //TODO Make service from it
-                _kononDir = new DirectoryInfo("konon");
-                var files = _kononDir.GetFiles("*.mp3");
-                await _service.SendAudioAsync(Context.Guild, Context.Channel, $"konon/{files[_random.GetRandomValueFromZero(files.Length)]}");
             }
         }
         

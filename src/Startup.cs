@@ -60,7 +60,7 @@ namespace MayorBot
                 .AddSingleton<Random>() // Add random to the collection
                 .AddSingleton(Configuration)
                 .AddSingleton<CommandHandler>() // Add the configuration to the collection
-                .AddSingleton<AudioService>()
+                .AddSingleton<AudioService>() //Add audio service
                 .AddSingleton<RandomGenService>(); //Add AudioService to the collection
         }
     }
