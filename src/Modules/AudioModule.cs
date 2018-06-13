@@ -69,7 +69,21 @@ namespace MayorBot.Modules
             public async Task PlayKonon([Remainder] double minutes = 2)
             {
                 await _service.LeaveAudio(Context.Guild);
-                await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState)?.VoiceChannel);
+
+                try
+                {
+                    await _service.JoinAudio(Context.Guild, (Context.User as IVoiceState)?.VoiceChannel);
+                }
+                catch(NullReferenceException)
+                {
+                    await Context.Channel.SendMessageAsync("You have to join the channel first!");
+                }
+                catch
+                {
+                    await Context.Channel.SendMessageAsync("There was a problem handling your request");
+                    return;
+                }
+
                 //Debug version takes the parent folder, while release will take folder defined in dockerfile
                 #if DEBUG
                 var kononDir = new DirectoryInfo(@"konon");
