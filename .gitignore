@@ -252,3 +252,5 @@ paket-files/
 *.sln.iml
 src/_configuration.json
 src/dockerfile
+src/_configurationDebug.json
+src/.DS_Store
