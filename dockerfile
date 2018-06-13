@@ -1,6 +1,4 @@
 FROM microsoft/dotnet:2.1.300-sdk-stretch AS build
-# Install opus
-
 WORKDIR /app
 
 # copy csproj and restore as distinct layers
@@ -21,16 +19,6 @@ RUN dotnet publish -c Release -o out
 WORKDIR /app/src/out
 RUN rm -rf ./konon
 COPY src/konon/*.mp3 ./konon/
-
-
-# RUN apt-get install build-essential
-# COPY opus-1.2.1.tar.gz /bin/
-# WORKDIR /bin/
-# RUN tar -xvf opus-1.2.1.tar.gz
-# WORKDIR /bin/opus-1.2.1/
-# RUN ./configure
-# RUN make
-# RUN make install
 
 FROM microsoft/dotnet:2.1.0-runtime-stretch-slim AS runtime
 RUN apt-get update -y && apt-get install -y build-essential
