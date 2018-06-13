@@ -19,6 +19,7 @@ RUN dotnet publish -c Release -o out
 
 # Copy konon folder to release folder
 WORKDIR /app/src/out
+RUN rm -rf ./konon
 COPY src/konon/*.mp3 ./konon/
 
 
