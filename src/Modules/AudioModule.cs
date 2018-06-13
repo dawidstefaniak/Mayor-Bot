@@ -77,6 +77,7 @@ namespace MayorBot.Modules
                 catch(NullReferenceException)
                 {
                     await Context.Channel.SendMessageAsync("You have to join the channel first!");
+                    return;
                 }
                 catch
                 {
