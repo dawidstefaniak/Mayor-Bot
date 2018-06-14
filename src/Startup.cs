@@ -18,7 +18,7 @@ namespace MayorBot
             var builder = new ConfigurationBuilder()        // Create a new instance of the config builder
                 .SetBasePath(AppContext.BaseDirectory)      // Specify the default location for the config file
                 #if DEBUG
-                .AddJsonFile("_configurationDebug.json");
+                .AddJsonFile("_configurationDebug.json");   // Debug version for the local deployment and testing
                 #else
                 .AddJsonFile("_configuration.json");        // Add this (json encoded) file to the configuration
                 #endif

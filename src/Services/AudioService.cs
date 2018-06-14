@@ -1,7 +1,9 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 using Discord;
 using Discord.Audio;
 
@@ -10,6 +12,14 @@ namespace MayorBot.Services
     public class AudioService
     {
         private readonly ConcurrentDictionary<ulong, IAudioClient> _connectedChannels = new ConcurrentDictionary<ulong, IAudioClient>();
+
+        public async Task<bool> CheckIfConnectedToChannelAsync(IMessageChannel channel, IVoiceChannel voicechannel)
+        {
+            var users = await voicechannel.GetUsersAsync(CacheMode.AllowDownload).Flatten();
+            if(users.ToList().Count > 1)
+                return true;
+            return false;
+        }
 
         public async Task JoinAudio(IGuild guild, IVoiceChannel target)
         {

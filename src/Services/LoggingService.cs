@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
+//TODO add logging for other modules
 namespace MayorBot
 {
     public class LoggingService

@@ -66,7 +66,7 @@ namespace MayorBot.Modules
             [Summary("Play Kononowicz&Major :flag_pl:")]
             [Command("konon", RunMode = RunMode.Async)]
             [Name("play konon")]
-            public async Task PlayKonon([Remainder] double minutes = 2)
+            public async Task PlayKonon([Remainder] double minutes = 5)
             {
                 await _service.LeaveAudio(Context.Guild);
 
@@ -86,21 +86,28 @@ namespace MayorBot.Modules
                 }
 
                 //Debug version takes the parent folder, while release will take folder defined in dockerfile
+                //TODO Move to service instead of cast each time
                 #if DEBUG
                 var kononDir = new DirectoryInfo(@"konon");
                 #else
                 var kononDir = new DirectoryInfo(@"/app/konon");
                 #endif
                 var files = kononDir.GetFiles(@"*.mp3");
-                //This to service
+
                 await Context.Channel.SendMessageAsync("Mayor bot activated!");
-                if (minutes >= 2)
                 while (true)
+                if (minutes >= 2 && minutes <= 15)
+                if(await _service.CheckIfConnectedToChannelAsync(Context.Channel, (Context.User as IVoiceState)?.VoiceChannel))
                 {
-                    await _service.SendAudioAsync(Context.Guild, Context.Channel, $@"{files[_random.GetRandomValueFromZero(files.Length)].FullName}");
+                    var filename = files[_random.GetRandomValueFromZero(files.Length)].FullName;
+                    await _service.SendAudioAsync(Context.Guild, Context.Channel, $@"{filename}");
                     Thread.Sleep(_random.GetRangeValue(minutes * 60000));
                 }
-                else await Context.Channel.SendMessageAsync("The value has to be higher than 2.");
+                else 
+                {
+                    await _service.LeaveAudio(Context.Guild);
+                    break;
+                }
             }
         }
     }
